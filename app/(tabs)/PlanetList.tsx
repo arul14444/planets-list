@@ -9,6 +9,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { BASE_URL } from "@/env";
+import { useNavigation } from "@react-navigation/native";
 
 type Planet = {
   uid: string;
@@ -21,6 +22,8 @@ export default function PlanetsScreen() {
   const [loading, setLoading] = useState(false);
   const [nextPageUrl, setNextPageUrl] = useState(`${BASE_URL}?page=1&limit=15`);
   const [hasMore, setHasMore] = useState(true);
+
+  const navigation = useNavigation();
 
   const fetchPlanets = async () => {
     if (loading || !hasMore) return;
@@ -52,13 +55,12 @@ export default function PlanetsScreen() {
       <TouchableOpacity
         style={styles.eyeButton}
         onPress={() => {
-          console.log("Check Detail", item);
+          navigation.navigate('PlanetDetail', { uid: item.uid });
         }}
       >
         <FontAwesome name="eye" size={24} color="#007AFF" />
       </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.addButton}>
+      <TouchableOpacity style={styles.addButton}>
         <FontAwesome name="plus" size={24} color="#000000" />
       </TouchableOpacity>
     </View>
