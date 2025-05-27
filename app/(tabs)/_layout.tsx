@@ -7,13 +7,13 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
-import { WishListProvider } from '@/context/WishListContext'; // ✅ Tambahkan ini
+import { WishListProvider } from '@/context/WishListContext'; 
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <WishListProvider> {/* ✅ Bungkus Tabs dengan Provider */}
+    <WishListProvider> {}
       <Tabs
         screenOptions={{
           tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,

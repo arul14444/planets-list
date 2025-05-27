@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { BASE_URL } from "@/env";
 import { useNavigation } from "@react-navigation/native";
-import { useWishList } from "@/context/WishListContext"; // ✅ Import tetap
+import { useWishList } from "@/context/WishListContext"; 
 
 type Planet = {
   uid: string;
@@ -26,7 +26,7 @@ export default function PlanetsScreen() {
 
   const navigation = useNavigation();
 
-  const { addToWishlist } = useWishList(); // ✅ Harus di dalam komponen
+  const { addToWishlist } = useWishList(); 
 
   const fetchPlanets = async () => {
     if (loading || !hasMore) return;
@@ -68,6 +68,7 @@ export default function PlanetsScreen() {
         onPress={() => {
           console.log("Add to wishlist:", item);
           addToWishlist(item);
+          navigation.navigate("WishListPlanet");
         }}
       >
         <FontAwesome name="plus" size={24} color="#000000" />
