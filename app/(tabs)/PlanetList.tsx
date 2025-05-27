@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { BASE_URL } from "@/env";
 import { useNavigation } from "@react-navigation/native";
+import { useWishList } from "@/context/WishListContext"; // ✅ Import tetap
 
 type Planet = {
   uid: string;
@@ -24,6 +25,8 @@ export default function PlanetsScreen() {
   const [hasMore, setHasMore] = useState(true);
 
   const navigation = useNavigation();
+
+  const { addToWishlist } = useWishList(); // ✅ Harus di dalam komponen
 
   const fetchPlanets = async () => {
     if (loading || !hasMore) return;
@@ -55,12 +58,18 @@ export default function PlanetsScreen() {
       <TouchableOpacity
         style={styles.eyeButton}
         onPress={() => {
-          navigation.navigate('PlanetDetail', { uid: item.uid });
+          navigation.navigate("PlanetDetail", { uid: item.uid });
         }}
       >
         <FontAwesome name="eye" size={24} color="#007AFF" />
       </TouchableOpacity>
-      <TouchableOpacity style={styles.addButton}>
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => {
+          console.log("Add to wishlist:", item);
+          addToWishlist(item);
+        }}
+      >
         <FontAwesome name="plus" size={24} color="#000000" />
       </TouchableOpacity>
     </View>
