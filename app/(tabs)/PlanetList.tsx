@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { FontAwesome } from "@expo/vector-icons";
-import {
-  View,
-  Text,
-  FlatList,
-  ActivityIndicator,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
+import { useWishList } from "@/context/WishListContext";
 import { BASE_URL } from "@/env";
+import { FontAwesome } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { useWishList } from "@/context/WishListContext"; 
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 type Planet = {
   uid: string;
@@ -23,10 +24,10 @@ export default function PlanetsScreen() {
   const [loading, setLoading] = useState(false);
   const [nextPageUrl, setNextPageUrl] = useState(`${BASE_URL}?page=1&limit=15`);
   const [hasMore, setHasMore] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const navigation = useNavigation();
-
-  const { addToWishlist } = useWishList(); 
+  const { addToWishlist } = useWishList();
 
   const fetchPlanets = async () => {
     if (loading || !hasMore) return;
@@ -37,6 +38,7 @@ export default function PlanetsScreen() {
       const data = await response.json();
 
       setPlanets((prev) => [...prev, ...data.results]);
+
       setNextPageUrl(data.next);
       setHasMore(data.next !== null);
     } catch (error) {
@@ -46,9 +48,14 @@ export default function PlanetsScreen() {
     }
   };
 
+  
   useEffect(() => {
     fetchPlanets();
   }, []);
+  
+ const planetFiltered = planets.filter((planet) =>
+    planet.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const renderItem = ({ item }: { item: Planet }) => (
     <View style={styles.card}>
@@ -57,16 +64,13 @@ export default function PlanetsScreen() {
       </View>
       <TouchableOpacity
         style={styles.eyeButton}
-        onPress={() => {
-          navigation.navigate("PlanetDetail", { uid: item.uid });
-        }}
+        onPress={() => navigation.navigate("PlanetDetail", { uid: item.uid })}
       >
         <FontAwesome name="eye" size={24} color="#007AFF" />
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.addButton}
         onPress={() => {
-          console.log("Add to wishlist:", item);
           addToWishlist(item);
           navigation.navigate("WishListPlanet");
         }}
@@ -76,10 +80,18 @@ export default function PlanetsScreen() {
     </View>
   );
 
+
   return (
     <View style={styles.container}>
+      <TextInput
+        style ={styles.searchBar}
+        placeholder="Search by name "
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+      />
+
       <FlatList
-        data={planets}
+        data={planetFiltered}
         keyExtractor={(item) => item.uid}
         renderItem={renderItem}
         onEndReached={fetchPlanets}
@@ -94,6 +106,14 @@ export default function PlanetsScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16 },
+  searchBar: {
+    backgroundColor: "#fff",
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 16,
+  },
   card: {
     flexDirection: "row",
     justifyContent: "space-between",
